@@ -1,0 +1,4 @@
+Adapt clustering Algorithms LEACH, HEED and DEECRP to an event-base simulation.
+
+Run main.py for one simulation
+Run main_mean.py for 20 simulations
