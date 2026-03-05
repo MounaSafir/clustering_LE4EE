@@ -10,7 +10,7 @@ class Config:
         self.max_y = 100
         self.bs_x = 0
         self.bs_y = 0
-        self.nb_sensors = 200
+        self.nb_sensors = 10
 
         self.create_sensor = create_sensor         
         # Generation of events
@@ -23,7 +23,7 @@ class Config:
         self.E_DA = 5e-9
         self.E_FS = 10e-12
         self.E_MP = 0.0013e-12
-        self.EI = 2
+        self.EI = 0.5
 
         
         # Packet size 
@@ -39,7 +39,7 @@ class Config:
         # DEECRP config
 
         self.m = 0.2
-        self.E_AN = 3
+        self.E_AN = 1
 
         self.AREA_DIAMETER = sqrt(100**2 + 100**2
         )

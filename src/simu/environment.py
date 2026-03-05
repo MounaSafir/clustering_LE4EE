@@ -56,6 +56,7 @@ class Environment:
         for sensor in self.sensors:
             if sensor.state != State.DEAD:
                 return False
+        print("No node alive.")
         return True
     
     def main(self, simpy_env):
@@ -68,9 +69,10 @@ class Environment:
             sensor.main(simpy_env)
                     
         self.metric.update(simpy_env)
-        while not self.is_finished():
-            
-            for i in range(1):
+        while not self.is_finished(): # TODO
+            i = random.randint(1, 1000)
+            if i == 7:
+                print(i)
                 self.simpy_env.process(self.create_event())
                 
             yield simpy_env.timeout(10)

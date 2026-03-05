@@ -7,6 +7,8 @@ import random
 
 from enum import Enum
 
+MSG_TYPES = {"DATA", "AGG_DATA", "BASE_STATION"}
+
 class OutOfEnergy(Exception):
     pass
 
@@ -32,9 +34,6 @@ class Sensors(Node):
     
     
     def send(self, radio_range, msg):
-
-        
-
             length = msg.length
             if radio_range < self.config.d0:
                 E = length * self.config.E_TX + length * self.config.E_FS * radio_range**2
@@ -53,11 +52,8 @@ class Sensors(Node):
             # AUCUN message reçu
             if msg is None:
                 return None
-
-            # Messages qui consomment de l’énergie
-            ENERGY_MSGS = {"DATA", "AGG_DATA", "BASE_STATION"}
-
-            if msg.tag in ENERGY_MSGS:
+            
+            if msg.tag in MSG_TYPES:
                 E = msg.length * self.config.E_RX
                 self.er -= E
                 if self.er <= 0:
@@ -72,7 +68,7 @@ class Sensors(Node):
 
         while self.simpy_env.now - now < timeout:
             msg = yield from self.receive(5)
-            while msg != None:
+            while msg != None: # TODO Timeout ignored. We should wait msgs until timeout is over
                 if msg.tag == "DATA":
                     self.config.environment.metric.event_received_by_ch()
                     aggregates.append(msg.data)
@@ -119,11 +115,6 @@ class Sensors(Node):
 
                 else:
                     msg_ch = Message(self.id, self.simpy_env.now, "DATA", {"value": random.randint(1, 100),"my_ch": self.my_ch}, self.config.PACKET_SIZE)
-                   
-              
-                       
-                   
-            
                     self.send(self.config.RANGE, msg_ch)
                 
                 self.end_iteration()
@@ -133,7 +124,7 @@ class Sensors(Node):
         except OutOfEnergy as e:   
             
             self.state = State.DEAD
-            print("No node alive")
+            print(f"Node {self.id}: I'm dead")
 
     
     def main(self, simpy_env):
