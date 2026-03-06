@@ -1,9 +1,36 @@
 
 --- LEACH ---
-Events generated: mean=43205.0, min=43205, max=43205
-Events received by CH: mean=3720.0, min=3720, max=3720
-Events received by BS: mean=1673.0, min=1673, max=1673
-Delivery ratio: mean=0.0387, min=0.0387, max=0.0387
-FND: mean=50712071.00, min=50712071.00, max=50712071.00
-HND: mean=85713095.00, min=85713095.00, max=85713095.00
-LND: mean=153947894.00, min=153947894.00, max=153947894.00
+Events generated: mean=52390.3, min=51292, max=53906
+Events received by CH: mean=16698.2, min=15966, max=17228
+Events received by BS: mean=1522.2, min=223, max=2551
+Delivery ratio: mean=0.0291, min=0.0043, max=0.0488
+FND: mean=10008103.10, min=7666040.00, max=11331831.00
+HND: mean=25709555.40, min=23502443.00, max=27427178.00
+LND: mean=62681338.70, min=55022322.00, max=71803046.00
+
+--- HEED ---
+Events generated: mean=51260.2, min=50378, max=52606
+Events received by CH: mean=12661.4, min=11695, max=14792
+Events received by BS: mean=3615.4, min=842, max=5276
+Delivery ratio: mean=0.0706, min=0.0165, max=0.1034
+FND: mean=10659420.20, min=7906250.00, max=13209865.00
+HND: mean=25111842.70, min=23164496.00, max=27100293.00
+LND: mean=62045684.10, min=54139729.00, max=69647558.00
+
+--- DEECRP no routing ---
+Events generated: mean=50068.7, min=49082, max=51106
+Events received by CH: mean=13.3, min=0, max=132
+Events received by BS: mean=3775.2, min=1975, max=4830
+Delivery ratio: mean=0.0754, min=0.0396, max=0.0972
+FND: mean=8704601.20, min=7664480.00, max=9784620.00
+HND: mean=24589157.20, min=23003232.00, max=26077588.00
+LND: mean=51678056.50, min=46902052.00, max=57590205.00
+
+--- DEECRP with routing ---
+Events generated: mean=41716.4, min=38395, max=44582
+Events received by CH: mean=13.3, min=0, max=132
+Events received by BS: mean=5335.1, min=4512, max=6848
+Delivery ratio: mean=0.1284, min=0.1012, max=0.1598
+FND: mean=896175.70, min=252557.00, max=2425755.00
+HND: mean=21453320.90, min=19582117.00, max=23190286.00
+LND: mean=51484221.40, min=46902052.00, max=57481014.00
