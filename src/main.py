@@ -97,7 +97,7 @@ def display_results(results):
     if len(results) > 0:
         plt.figure()
         for res in results:
-            plt.plot(res['metrics']["time"]["mean"], res['metrics']["delivery_ratio_ts"]["mean"], label=res['name'])
+            plt.plot(res['metrics']["time"]["mean"], res['metrics']["delivery_ratio"]["mean"], label=res['name'])
         plt.xlabel("Time")
         plt.ylabel("Delivery Ratio")
         plt.title("Delivery Ratio Comparison (Mean)")
@@ -207,7 +207,7 @@ def aggregate_results(results_list):
     # Aggregate lists: find min length, average point-wise
     min_len = min(len(r['metrics']['time']) for r in results_list)
     aggregated['metrics'] = {}
-    list_keys = ['time', 'alive_nodes', 'delivery_ratio_ts', 'received_by_bs_ts', 'energy_total']
+    list_keys = ['time', 'alive_nodes', 'delivery_ratio', 'received_by_bs_ts', 'energy_total']
     for key in list_keys:
         values = [r['metrics'][key][:min_len] for r in results_list]
         aggregated['metrics'][key] = {

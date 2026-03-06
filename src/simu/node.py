@@ -5,8 +5,6 @@ import random
 
 class Node:
     
-    
-    
     def __init__(self, position, id, config):
         self.position = position
         self.id = id 
