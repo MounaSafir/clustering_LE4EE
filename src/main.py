@@ -25,7 +25,14 @@ def run_simulation(SensorClass, generator, seed=42):
     simpy_env.process(env.main(simpy_env))
     simpy_env.run()
 
-    return env  
+    return env 
+
+def DeecrpNoRouting(position, id, config):
+    return DeecrpSensors(position, id, config, use_routing=False)
+
+
+def DeecrpWithRouting(position, id, config):
+    return DeecrpSensors(position, id, config, use_routing=True)
 
 def final_delivery_ratio(metrics):
     gen = metrics["generated_events"]
@@ -246,8 +253,8 @@ def aggregate_results(results_list):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run WSN simulations")
-    parser.add_argument('-s', '--simulations', nargs='+', choices=['L', 'H', 'D'], required=True,
-                        help="Simulations to run: L for LEACH, H for HEED, D for DEECRP")
+    parser.add_argument('-s', '--simulations', nargs='+', choices=['L', 'H', 'D','Dr'], required=True,
+                        help="Simulations to run: L for LEACH, H for HEED, D for DEECRP no routing, Dr for DEECRP with routing")
     parser.add_argument('-n', '--runs', type=int, default=1,
                         help="Number of runs per simulation (default: 1)")
     parser.add_argument('--save', nargs='?', const='results', default=None, metavar='DIR',
@@ -257,7 +264,8 @@ if __name__ == "__main__":
     sensor_classes = {
         'L': (LeachSensors, generate_random, 'LEACH'),
         'H': (HeedSensors, generate_random, 'HEED'),
-        'D': (DeecrpSensors, generate_grid, 'DEECRP')
+        'D': (DeecrpNoRouting, generate_grid, 'DEECRP no routing'),
+        'Dr': (DeecrpWithRouting, generate_grid, 'DEECRP with routing')
     }
 
     results = []
