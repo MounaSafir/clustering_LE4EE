@@ -2,6 +2,7 @@ import simpy
 import random
 import matplotlib.pyplot as plt
 import argparse
+import os
 
 from simu.environment import Environment
 from simu.config import Config
@@ -10,6 +11,7 @@ from simu.generate_sensors import generate_random , generate_grid
 from simu.leach.leach_sensor import LeachSensors
 from simu.heed.heed_sensor import HeedSensors
 from simu.deecrp.deecrp_sensor import DeecrpSensors
+from tqdm import tqdm
 
 
 
@@ -40,15 +42,10 @@ def compute_lifetime(metrics, nb_nodes):
     lnd = None
 
     for t, a in zip(times, alive):
-        # First Node Dies
         if fnd is None and a < nb_nodes:
             fnd = t
-
-        # Half Nodes Die
         if hnd is None and a <= nb_nodes / 2:
             hnd = t
-
-        # Last Node Dies
         if lnd is None and a == 0:
             lnd = t
 
@@ -73,29 +70,39 @@ def run_and_analyze(SensorClass, generator, name, seed=42):
         'received_by_bs': metrics["received_by_bs"]
     }
 
-def display_results(results):
-    for res in results:
-        print(f"\n--- {res['name']} ---")
-        print(f"Events generated: mean={res['generated_events']['mean']:.1f}, min={res['generated_events']['min']}, max={res['generated_events']['max']}")
-        print(f"Events received by CH: mean={res['received_by_ch']['mean']:.1f}, min={res['received_by_ch']['min']}, max={res['received_by_ch']['max']}")
-        print(f"Events received by BS: mean={res['received_by_bs']['mean']:.1f}, min={res['received_by_bs']['min']}, max={res['received_by_bs']['max']}")
-        print(f"Delivery ratio: mean={res['delivery_ratio']['mean']:.4f}, min={res['delivery_ratio']['min']:.4f}, max={res['delivery_ratio']['max']:.4f}")
-        if res['fnd']['mean'] is not None:
-            print(f"FND: mean={res['fnd']['mean']:.2f}, min={res['fnd']['min']:.2f}, max={res['fnd']['max']:.2f}")
-        else:
-            print("FND: not reached")
-        if res['hnd']['mean'] is not None:
-            print(f"HND: mean={res['hnd']['mean']:.2f}, min={res['hnd']['min']:.2f}, max={res['hnd']['max']:.2f}")
-        else:
-            print("HND: not reached")
-        if res['lnd']['mean'] is not None:
-            print(f"LND: mean={res['lnd']['mean']:.2f}, min={res['lnd']['min']:.2f}, max={res['lnd']['max']:.2f}")
-        else:
-            print("LND: not reached")
+def display_results(results, save_dir=None):
+    if save_dir:
+        os.makedirs(save_dir, exist_ok=True)
 
-    # Plots using means
+    stats_lines = []
+    for res in results:
+        stats_lines.append(f"\n--- {res['name']} ---")
+        stats_lines.append(f"Events generated: mean={res['generated_events']['mean']:.1f}, min={res['generated_events']['min']}, max={res['generated_events']['max']}")
+        stats_lines.append(f"Events received by CH: mean={res['received_by_ch']['mean']:.1f}, min={res['received_by_ch']['min']}, max={res['received_by_ch']['max']}")
+        stats_lines.append(f"Events received by BS: mean={res['received_by_bs']['mean']:.1f}, min={res['received_by_bs']['min']}, max={res['received_by_bs']['max']}")
+        stats_lines.append(f"Delivery ratio: mean={res['delivery_ratio']['mean']:.4f}, min={res['delivery_ratio']['min']:.4f}, max={res['delivery_ratio']['max']:.4f}")
+        if res['fnd']['mean'] is not None:
+            stats_lines.append(f"FND: mean={res['fnd']['mean']:.2f}, min={res['fnd']['min']:.2f}, max={res['fnd']['max']:.2f}")
+        else:
+            stats_lines.append("FND: not reached")
+        if res['hnd']['mean'] is not None:
+            stats_lines.append(f"HND: mean={res['hnd']['mean']:.2f}, min={res['hnd']['min']:.2f}, max={res['hnd']['max']:.2f}")
+        else:
+            stats_lines.append("HND: not reached")
+        if res['lnd']['mean'] is not None:
+            stats_lines.append(f"LND: mean={res['lnd']['mean']:.2f}, min={res['lnd']['min']:.2f}, max={res['lnd']['max']:.2f}")
+        else:
+            stats_lines.append("LND: not reached")
+
+    output = "\n".join(stats_lines)
+    print(output)
+
+    if save_dir:
+        with open(f"{save_dir}/stats.txt", "w") as f:
+            f.write(output)
+
     if len(results) > 0:
-        plt.figure()
+        plt.figure("delivery_ratio")
         for res in results:
             plt.plot(res['metrics']["time"]["mean"], res['metrics']["delivery_ratio"]["mean"], label=res['name'])
         plt.xlabel("Time")
@@ -104,8 +111,10 @@ def display_results(results):
         plt.ylim(0, 1)
         plt.grid(True)
         plt.legend()
+        if save_dir:
+            plt.savefig(f"{save_dir}/delivery_ratio.png", dpi=300, bbox_inches='tight')
 
-        plt.figure()
+        plt.figure("alive_nodes")
         for res in results:
             plt.plot(res['metrics']["time"]["mean"], res['metrics']["alive_nodes"]["mean"], label=res['name'])
         plt.xlabel("Time")
@@ -113,9 +122,11 @@ def display_results(results):
         plt.title("Alive Nodes Over Time (Mean)")
         plt.grid(True)
         plt.legend()
+        if save_dir:
+            plt.savefig(f"{save_dir}/alive_nodes.png", dpi=300, bbox_inches='tight')
 
         total_nodes = results[0]['nb_nodes']
-        plt.figure()
+        plt.figure("dead_nodes")
         for res in results:
             dead = [total_nodes - a for a in res['metrics']["alive_nodes"]["mean"]]
             plt.plot(res['metrics']["time"]["mean"], dead, label=res['name'])
@@ -124,8 +135,10 @@ def display_results(results):
         plt.title("Dead Nodes Over Time (Mean)")
         plt.grid(True)
         plt.legend()
+        if save_dir:
+            plt.savefig(f"{save_dir}/dead_nodes.png", dpi=300, bbox_inches='tight')
 
-        plt.figure()
+        plt.figure("packets_bs")
         for res in results:
             plt.plot(res['metrics']["time"]["mean"], res['metrics']["received_by_bs_ts"]["mean"], label=res['name'])
         plt.xlabel("Time")
@@ -133,8 +146,10 @@ def display_results(results):
         plt.title("Cumulative Data Delivered to BS (Mean)")
         plt.grid(True)
         plt.legend()
+        if save_dir:
+            plt.savefig(f"{save_dir}/packets_bs.png", dpi=300, bbox_inches='tight')
 
-        plt.figure()
+        plt.figure("energy_total")
         for res in results:
             plt.plot(res['metrics']["time"]["mean"], res['metrics']["energy_total"]["mean"], label=res['name'])
         plt.xlabel("Time")
@@ -142,20 +157,23 @@ def display_results(results):
         plt.title("Total Network Energy vs Time (Mean)")
         plt.grid(True)
         plt.legend()
-
+        if save_dir:
+            plt.savefig(f"{save_dir}/energy_total.png", dpi=300, bbox_inches='tight')
 
         final_energy_eff = {
-            res['name']: res['metrics']["received_by_bs_ts"]["mean"][-1] / 
+            res['name']: res['metrics']["received_by_bs_ts"]["mean"][-1] /
                         (res['metrics']["energy_total"]["mean"][0] - res['metrics']["energy_total"]["mean"][-1])
             for res in results
         }
 
-        plt.figure()
+        plt.figure("energy_efficiency")
         plt.bar(final_energy_eff.keys(), final_energy_eff.values())
         plt.ylabel("Packets / Joule")
         plt.title("Final Energy Efficiency Comparison")
         plt.grid(axis="y")
         plt.tight_layout()
+        if save_dir:
+            plt.savefig(f"{save_dir}/energy_efficiency.png", dpi=300, bbox_inches='tight')
 
         plt.show()
 
@@ -163,10 +181,8 @@ def aggregate_results(results_list):
     if not results_list:
         return None
     
-    # Assume all have same nb_nodes
     nb_nodes = results_list[0]['nb_nodes']
     
-    # Aggregate scalars
     delivery_ratios = [r['delivery_ratio'] for r in results_list]
     generated_events = [r['generated_events'] for r in results_list]
     received_by_ch = [r['received_by_ch'] for r in results_list]
@@ -215,7 +231,6 @@ def aggregate_results(results_list):
         }
     }
     
-    # Aggregate lists: find min length, average point-wise
     min_len = min(len(r['metrics']['time']) for r in results_list)
     aggregated['metrics'] = {}
     list_keys = ['time', 'alive_nodes', 'delivery_ratio', 'received_by_bs_ts', 'energy_total']
@@ -235,6 +250,8 @@ if __name__ == "__main__":
                         help="Simulations to run: L for LEACH, H for HEED, D for DEECRP")
     parser.add_argument('-n', '--runs', type=int, default=1,
                         help="Number of runs per simulation (default: 1)")
+    parser.add_argument('--save', nargs='?', const='results', default=None, metavar='DIR',
+                        help="Save figures and stats to directory (default: 'results')")
     args = parser.parse_args()
 
     sensor_classes = {
@@ -247,12 +264,10 @@ if __name__ == "__main__":
     for sim in args.simulations:
         SensorClass, generator, name = sensor_classes[sim]
         sim_results = []
-        for run in range(args.runs):
-            result = run_and_analyze(SensorClass, generator, name, seed=42 + run)  # Different seed per run
+        for run in tqdm(range(args.runs), desc=name):
+            result = run_and_analyze(SensorClass, generator, name, seed=42 + run)
             sim_results.append(result)
         aggregated = aggregate_results(sim_results)
         results.append(aggregated)
 
-    display_results(results)
-
-
+    display_results(results, save_dir=args.save)

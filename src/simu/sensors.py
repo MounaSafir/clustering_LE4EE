@@ -139,7 +139,6 @@ class Sensors(Node):
 
         except OutOfEnergy:   
             self.state = State.DEAD
-            print(f"Node {self.id}: I'm dead")
     
     def main(self, simpy_env):
         self.simpy_env = simpy_env

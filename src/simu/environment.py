@@ -48,7 +48,6 @@ class Environment:
         for sensor in self.sensors:
             if sensor.state != State.DEAD:
                 return False
-        print("No node alive.")
         return True
     
     # Generate random events for the x next seconds
@@ -94,7 +93,6 @@ class Environment:
 
             
         base_station.interrupt()
-        print("End of the simulation")
 
             
             
