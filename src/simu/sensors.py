@@ -98,7 +98,6 @@ class Sensors(Node):
             while True:
                 yield self.sleep_event
                 self.er -= self.config.E_SLEEP * (self.simpy_env.now - last_time)
-                print(f"[SLEEP] {self.id} en={self.er}")
                 last_time = self.simpy_env.now
                 if self.er <= 1e-6:
                     raise OutOfEnergy()
@@ -107,7 +106,6 @@ class Sensors(Node):
                 
                 yield from self.iteration()
                 self.er -= self.config.E_IDLE * (self.simpy_env.now - last_time)
-                print(f"[IDLE] {self.id} en={self.er}")
                 last_time = self.simpy_env.now
                 if self.er <= 1e-6:
                     raise OutOfEnergy()

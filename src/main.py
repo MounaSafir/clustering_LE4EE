@@ -143,7 +143,20 @@ def display_results(results):
         plt.grid(True)
         plt.legend()
 
-        
+
+        final_energy_eff = {
+            res['name']: res['metrics']["received_by_bs_ts"]["mean"][-1] / 
+                        (res['metrics']["energy_total"]["mean"][0] - res['metrics']["energy_total"]["mean"][-1])
+            for res in results
+        }
+
+        plt.figure()
+        plt.bar(final_energy_eff.keys(), final_energy_eff.values())
+        plt.ylabel("Packets / Joule")
+        plt.title("Final Energy Efficiency Comparison")
+        plt.grid(axis="y")
+        plt.tight_layout()
+
         plt.show()
 
 def aggregate_results(results_list):
