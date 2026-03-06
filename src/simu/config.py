@@ -24,7 +24,7 @@ class Config:
         self.E_DA = 5e-9
         self.E_FS = 10e-12
         self.E_MP = 0.0013e-12
-        self.EI = 2.0
+        self.EI = 0.5
         self.E_STARTUP = 50e-8
         self.E_IDLE = 50e-9
         self.E_SLEEP = 50e-10
@@ -42,7 +42,7 @@ class Config:
         # DEECRP config
 
         self.m = 0.2
-        self.E_AN = 2.5
+        self.E_AN = 0.75
 
         self.AREA_DIAMETER = sqrt(100**2 + 100**2)
  

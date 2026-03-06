@@ -3,6 +3,7 @@ import random
 import matplotlib.pyplot as plt
 import argparse
 import os
+import numpy as np
 
 from simu.environment import Environment
 from simu.config import Config
@@ -182,6 +183,33 @@ def display_results(results, save_dir=None):
         if save_dir:
             plt.savefig(f"{save_dir}/energy_efficiency.png", dpi=300, bbox_inches='tight')
 
+        plt.show()
+
+        # Lifetime comparison (FND, HND, LND)
+        protocols = [res['name'] for res in results]
+
+        fnd_vals = [res['fnd']['mean'] if res['fnd']['mean'] is not None else 0 for res in results]
+        hnd_vals = [res['hnd']['mean'] if res['hnd']['mean'] is not None else 0 for res in results]
+        lnd_vals = [res['lnd']['mean'] if res['lnd']['mean'] is not None else 0 for res in results]
+
+       
+        x = np.arange(len(protocols))
+        width = 0.25
+
+        plt.figure("lifetime_comparison")
+        plt.bar(x - width, fnd_vals, width, label="FND")
+        plt.bar(x, hnd_vals, width, label="HND")
+        plt.bar(x + width, lnd_vals, width, label="LND")
+
+        plt.xticks(x, protocols)
+        plt.ylabel("Time")
+        plt.title("Network Lifetime Comparison")
+        plt.legend()
+        plt.grid(axis="y")
+
+        if save_dir:
+            plt.savefig(f"{save_dir}/lifetime_comparison.png", dpi=300, bbox_inches='tight')
+        
         plt.show()
 
 def aggregate_results(results_list):

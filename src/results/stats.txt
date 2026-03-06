@@ -1,0 +1,9 @@
+
+--- LEACH ---
+Events generated: mean=43205.0, min=43205, max=43205
+Events received by CH: mean=3720.0, min=3720, max=3720
+Events received by BS: mean=1673.0, min=1673, max=1673
+Delivery ratio: mean=0.0387, min=0.0387, max=0.0387
+FND: mean=50712071.00, min=50712071.00, max=50712071.00
+HND: mean=85713095.00, min=85713095.00, max=85713095.00
+LND: mean=153947894.00, min=153947894.00, max=153947894.00
