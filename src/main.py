@@ -104,7 +104,6 @@ def display_results(results):
         plt.ylim(0, 1)
         plt.grid(True)
         plt.legend()
-        plt.show()
 
         plt.figure()
         for res in results:
@@ -114,7 +113,6 @@ def display_results(results):
         plt.title("Alive Nodes Over Time (Mean)")
         plt.grid(True)
         plt.legend()
-        plt.show()
 
         total_nodes = results[0]['nb_nodes']
         plt.figure()
@@ -126,7 +124,6 @@ def display_results(results):
         plt.title("Dead Nodes Over Time (Mean)")
         plt.grid(True)
         plt.legend()
-        plt.show()
 
         plt.figure()
         for res in results:
@@ -136,7 +133,6 @@ def display_results(results):
         plt.title("Cumulative Data Delivered to BS (Mean)")
         plt.grid(True)
         plt.legend()
-        plt.show()
 
         plt.figure()
         for res in results:
@@ -146,6 +142,8 @@ def display_results(results):
         plt.title("Total Network Energy vs Time (Mean)")
         plt.grid(True)
         plt.legend()
+
+        
         plt.show()
 
 def aggregate_results(results_list):
