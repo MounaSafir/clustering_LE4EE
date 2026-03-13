@@ -5,7 +5,7 @@ from simu.messsage import Message
 
 class DeecrpSensors(Sensors):
 
-    def __init__(self, position, id, config, use_routing=True):  # Mettre routing a True ou False
+    def __init__(self, position, id, config, use_routing=True):   
         super().__init__(position, id, config)
 
 
@@ -128,7 +128,6 @@ class DeecrpSensors(Sensors):
 
     def iteration(self):
 
-        # par securite
         if self.er <= 1e-6:
             self.state = State.DEAD
             return
@@ -138,7 +137,7 @@ class DeecrpSensors(Sensors):
             self.print(
                 f"START | er={self.er:.2f} | is_CH={self.is_CH} | my_ch={self.my_ch}"
             )
-        # devrais je rester CH ?
+        # Should I remain CH ?
 
         if self.is_CH:
             if self.er > self.compute_Eth(len(self.cluster_members)):
@@ -161,7 +160,7 @@ class DeecrpSensors(Sensors):
                         f"DROP_CH | er={self.er:.2f} < Eth={self.compute_Eth(len(self.cluster_members)):.2f}"
                     )
 
-        # J attends pour recevoir les KEEP_CH
+        # Wait for CH decision if I was a CH in the previous iteration
         if self.my_ch is not None:
             msg = yield from self.receive(1)
             if msg and msg.tag == "KEEP_CH" and msg.data == self.my_ch:
@@ -169,7 +168,7 @@ class DeecrpSensors(Sensors):
             else:
                 self.my_ch = None
 
-        # Je fais ma compagne
+        # If I am not CH, I advertise myself to my neighbors
 
         self.send(self.config.RANGE, Message(
             self.id, self.simpy_env.now,
@@ -178,7 +177,7 @@ class DeecrpSensors(Sensors):
             self.config.PACKET_SIZE
         ))
 
-        # Je recupere mes candidats
+        # I wait for the CH_ADV messages from my neighbors and I compute their fitness
 
         candidates = []
         msg = yield from self.receive(3)
@@ -205,7 +204,7 @@ class DeecrpSensors(Sensors):
 
         scored.sort(key=lambda x: x[0], reverse=True)
 
-        # Je boucle sur mes candidats pour rejoindre le meilleur CH
+        # I try to join the best CHs until I succeed or I become CH myself
         for _, cid in scored:
             if cid == self.id:
                 self.is_CH = True
@@ -230,7 +229,7 @@ class DeecrpSensors(Sensors):
             self.my_ch = self.id
             self.cluster_members.clear()
 
-        # Si je suis CH j'accepte les membres
+        # If I am CH, I wait for join requests and I accept them until the end of the iteration
         if self.is_CH:
             deadline = self.simpy_env.now + 2
             while self.simpy_env.now < deadline:
@@ -249,7 +248,7 @@ class DeecrpSensors(Sensors):
 
 
 
-        # La partie routage
+        # If I am CH and routing is enabled, I select the next hop for this iteration
 
         if self.is_CH and self.use_routing:
             self.send(self.config.RANGE, Message(

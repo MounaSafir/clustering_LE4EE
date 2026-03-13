@@ -55,10 +55,10 @@ Where:
 
 Available algorithms:
 
-* `L` → LEACH
-* `H` → HEED
-* `D` → DEECRP (no routing)
-* `Dr` → DEECRP (with routing)
+* `L`: LEACH
+* `H`: HEED
+* `D`: DEECRP (no routing)
+* `Dr`: DEECRP (with routing)
 
 Example running all protocols:
 

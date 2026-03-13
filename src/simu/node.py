@@ -46,11 +46,6 @@ class Node:
     def main(self, simpy_env):
         self.simpy_env = simpy_env
         while True:
-            # if random.random() < 0.5 and self.id == 3:
-            #     self.print(f"J'envoi un message")
-            #     self.send(1000, "Coucou")
-            # msg = yield simpy_env.process(self.receive(1))
-            # if msg is not None:
-            #     self.print(f"J'ai reçu un message" + str(msg))
+          
             yield simpy_env.timeout(1)
         
