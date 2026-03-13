@@ -1,1 +1,4 @@
 simpy
+matplolib
+numpy
+pandas
